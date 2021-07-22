@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.poc.watch_app_poc">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="watch_app_poc"
         android:icon="@mipmap/ic_launcher">
