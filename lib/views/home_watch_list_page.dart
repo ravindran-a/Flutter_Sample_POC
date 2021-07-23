@@ -3,6 +3,7 @@ import "package:http/http.dart" as http;
 import "dart:convert";
 import 'package:watch_app_poc/models/watch_item.dart';
 import 'package:watch_app_poc/views/cart_page.dart';
+import 'package:watch_app_poc/views/watch_detail_page.dart';
 
 import 'add_watch_item_form_page.dart';
 
@@ -88,27 +89,56 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
                 child: OrientationBuilder(builder: (context, orientation) {
                   return GridView.count(
                     crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
-                    childAspectRatio: 2 / 1,
+                    childAspectRatio: 1 / 1.3,
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 5,
                     padding: EdgeInsets.all(5.0),
                     children: watchItems
                         .map(
                           (data) => GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ItemDetailScreen()));
+                              },
                               child: Container(
-                                padding: const EdgeInsets.all(16),
-                                color: Colors.blue,
+                                padding: const EdgeInsets.all(10),
+                                color: Colors.white,
                                 child: Column(
                                   children: [
+                                    Image.network(
+                                        data.imageUrl.isNotEmpty
+                                            ? data.imageUrl
+                                            : "https://images-na.ssl-images-amazon.com/images/I/81wGRwNp2VL._UL1500_.jpg",
+                                        width: 250,
+                                        height: 100),
                                     Text(data.title,
                                         style: TextStyle(
-                                            fontSize: 18, color: Colors.black),
+                                            fontSize: 12, color: Colors.black),
                                         textAlign: TextAlign.center),
                                     Text(data.description,
                                         style: TextStyle(
-                                            fontSize: 18, color: Colors.black),
-                                        textAlign: TextAlign.center)
+                                            fontSize: 10, color: Colors.black),
+                                        textAlign: TextAlign.center),
+                                    Text(data.price.toString(),
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.black),
+                                        textAlign: TextAlign.center),
+                                    new Container(
+                                      child: ElevatedButton(
+                                        child: new Text(
+                                          'Add to Cart',
+                                          style: new TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                        onPressed: () {
+                                          this.addToCart();
+                                        },
+                                      ),
+                                      margin: new EdgeInsets.only(top: 20.0),
+                                    )
                                   ],
                                 ),
                               )),
@@ -119,6 +149,8 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
               )
             : Center(child: CircularProgressIndicator()));
   }
+
+  void addToCart() {}
 
   Future<void> getWatches() async {
     List<WatchItem> localItems = [];
@@ -136,7 +168,8 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
               id: value["id"] ?? "",
               title: value["title"] ?? "",
               description: value["description"] ?? "",
-              imageUrl: value["imageUrl"] ?? "",
+              imageUrl: value["imageUrl"] ??
+                  "https://images-na.ssl-images-amazon.com/images/I/81wGRwNp2VL._UL1500_.jpg",
               price: value["price"] ?? "");
           localItems.add(item);
         }
