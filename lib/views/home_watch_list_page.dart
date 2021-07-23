@@ -43,9 +43,14 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
               IconButton(
                   icon: Icon(Icons.shopping_cart),
                   onPressed: () async {
-                    await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CartScreen()));
-                    setState(() {});
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CartScreen(cartItems: cartItems)));
+                    setState(() {
+                      cartCount = this.cartItems.length;
+                    });
                   }),
               Positioned(
                   right: 11,
