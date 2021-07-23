@@ -16,6 +16,7 @@ class HomeWatchListScreen extends StatefulWidget {
 
 class _HomeWatchListScreen extends State<HomeWatchListScreen> {
   List<WatchItem> watchItems = [];
+  List<WatchItem> cartItems = [];
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   @override
