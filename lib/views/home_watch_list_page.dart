@@ -17,6 +17,9 @@ class HomeWatchListScreen extends StatefulWidget {
 class _HomeWatchListScreen extends State<HomeWatchListScreen> {
   List<WatchItem> watchItems = [];
   List<WatchItem> cartItems = [];
+  List<String> cartItemIds = [];
+  int cartCount = 0;
+
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   @override
@@ -32,12 +35,38 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
         title: Text("Buy Watches!"),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.shopping_cart),
-              onPressed: () async {
-                await Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => CartScreen()));
-                setState(() {});
-              }),
+            icon: Icon(Icons.search),
+            onPressed: () {},
+          ),
+          Stack(
+            children: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () async {
+                    await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CartScreen()));
+                    setState(() {});
+                  }),
+              Positioned(
+                  right: 11,
+                  top: 11,
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6)),
+                    constraints: BoxConstraints(minWidth: 12, minHeight: 12),
+                    child: Text(
+                      '$cartCount',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ))
+            ],
+          ),
         ],
       ),
       body: Container(
@@ -127,18 +156,19 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.black),
                                         textAlign: TextAlign.center),
-                                    new Container(
+                                    Container(
                                       child: ElevatedButton(
-                                        child: new Text(
-                                          'Add to Cart',
-                                          style: new TextStyle(
-                                              color: Colors.black),
+                                        child: Text(
+                                          this.cartItems.contains(data)
+                                              ? 'Remove from Cart'
+                                              : 'Add to Cart',
+                                          style: TextStyle(color: Colors.black),
                                         ),
                                         onPressed: () {
-                                          this.addToCart();
+                                          this.addToCart(data);
                                         },
                                       ),
-                                      margin: new EdgeInsets.only(top: 20.0),
+                                      margin: EdgeInsets.only(top: 20.0),
                                     )
                                   ],
                                 ),
@@ -151,7 +181,16 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
             : Center(child: CircularProgressIndicator()));
   }
 
-  void addToCart() {}
+  void addToCart(WatchItem item) {
+    setState(() {
+      if (this.cartItems.contains(item)) {
+        this.cartItems.removeAt(this.cartItems.indexOf(item));
+      } else {
+        this.cartItems.add(item);
+      }
+      cartCount = this.cartItems.length;
+    });
+  }
 
   Future<void> getWatches() async {
     List<WatchItem> localItems = [];
@@ -177,8 +216,12 @@ class _HomeWatchListScreen extends State<HomeWatchListScreen> {
       }
       setState(() {
         if (watchItems.isNotEmpty) {
-          watchItems.removeRange(0, watchItems.length - 1);
+          watchItems.removeRange(0, watchItems.length);
         }
+        if (cartItems.isNotEmpty) {
+          cartItems.removeRange(0, cartItems.length);
+        }
+        cartCount = this.cartItems.length;
         watchItems.addAll(localItems);
       });
     } else {
