@@ -134,10 +134,39 @@ class _CartScreen extends State<CartScreen> {
   }
 
   void placeOrder() {
+    showAlertDialog(context);
     final snackBar = SnackBar(content: Text('Yay! Order Placed!'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     setState(() {
       widget.cartItems.removeRange(0, widget.cartItems.length);
     });
+  }
+
+  void showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Order!"),
+      content: Text("Order placed successfully"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
